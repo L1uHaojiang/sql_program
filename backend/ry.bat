@@ -1,9 +1,9 @@
 @echo off
 
-rem jar平级目录
+% jar平级目录
 set AppName=ruoyi-admin.jar
 
-rem JVM参数
+% JVM参数
 set JVM_OPTS="-Dname=%AppName%  -Duser.timezone=Asia/Shanghai -Xms512m -Xmx1024m -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=512m -XX:+HeapDumpOnOutOfMemoryError -XX:+PrintGCDateStamps  -XX:+PrintGCDetails -XX:NewRatio=1 -XX:SurvivorRatio=30 -XX:+UseParallelGC -XX:+UseParallelOldGC"
 
 
@@ -39,7 +39,7 @@ echo  starting……
 echo  Start %AppName% success...
 goto:eof
 
-rem 函数stop通过jps命令查找pid并结束进程
+% 函数stop通过jps命令查找pid并结束进程
 :stop
 	for /f "usebackq tokens=1-2" %%a in (`jps -l ^| findstr %AppName%`) do (
 		set pid=%%a
@@ -48,7 +48,7 @@ rem 函数stop通过jps命令查找pid并结束进程
 	if not defined pid (echo process %AppName% does not exists) else (
 		echo prepare to kill %image_name%
 		echo start kill %pid% ...
-		rem 根据进程ID，kill进程
+		% 根据进程ID，kill进程
 		taskkill /f /pid %pid%
 	)
 goto:eof

@@ -1,0 +1,25 @@
+services:
+  database:
+    image: mysql:9
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: classroom_management
+    volumes:
+      - ./backend/sql/:/docker-entrypoint-initdb.d/:ro
+    ports:
+      - 3306:3306
+  redis:
+    image: redis
+    ports:
+      - 6379:6379
+  # backend:
+  #   build: ./backend
+  #   ports:
+  #     - 8080:8080
+  #   depends_on:
+  #     - database
+  #     - redis
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - 80:80

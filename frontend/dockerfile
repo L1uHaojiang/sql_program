@@ -1,0 +1,10 @@
+FROM node:lts
+RUN npm install -g http-server
+WORKDIR /app
+COPY package*.json ./
+RUN npm config set registry http://mirrors.cloud.tencent.com/npm/
+RUN npm install
+COPY . .
+RUN npm run build
+EXPOSE 80
+ENTRYPOINT ["http-server", "dist", "-p", "80"]

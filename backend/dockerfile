@@ -1,0 +1,22 @@
+FROM maven:3-eclipse-temurin-8 AS build
+WORKDIR /app
+# 下载依赖
+COPY pom.xml .
+COPY ./ruoyi-admin/pom.xml ./ruoyi-admin/
+COPY ./ruoyi-common/pom.xml ./ruoyi-common/
+COPY ./ruoyi-framework/pom.xml ./ruoyi-framework/
+COPY ./ruoyi-generator/pom.xml ./ruoyi-generator/
+COPY ./ruoyi-manage/pom.xml ./ruoyi-manage/
+COPY ./ruoyi-quartz/pom.xml ./ruoyi-quartz/
+COPY ./ruoyi-system/pom.xml ./ruoyi-system/
+RUN mvn dependency:go-offline
+# 构建项目
+COPY . ./
+RUN mvn package -Dmaven.test.skip=true
+
+FROM openjdk:8-jre-slim
+WORKDIR /app
+COPY --from=build /app/ruoyi-*/target/*.jar ./
+ENV PATH $PATH:$JAVA_HOME/bin
+EXPOSE 8080
+ENTRYPOINT [ "java", "-jar", "ruoyi-admin.jar", "-Xms256m", "-Xmx1024m", "-XX:MetaspaceSize=128m", "-XX:MaxMetaspaceSize=512m" ]
