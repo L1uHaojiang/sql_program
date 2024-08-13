@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manage.mapper.ClassroomsMapper">
+    
+    <resultMap type="Classrooms" id="ClassroomsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="capacity"    column="capacity"    />
+        <result property="building"    column="building"    />
+        <result property="floor"    column="floor"    />
+        <result property="equipment"    column="equipment"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectClassroomsVo">
+        select id, name, capacity, building, floor, equipment, status from classrooms
+    </sql>
+
+    <select id="selectClassroomsList" parameterType="Classrooms" resultMap="ClassroomsResult">
+        <include refid="selectClassroomsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="capacity != null "> and capacity = #{capacity}</if>
+            <if test="building != null  and building != ''"> and building = #{building}</if>
+            <if test="floor != null "> and floor = #{floor}</if>
+            <if test="equipment != null  and equipment != ''"> and equipment = #{equipment}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectClassroomsById" parameterType="Long" resultMap="ClassroomsResult">
+        <include refid="selectClassroomsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertClassrooms" parameterType="Classrooms" useGeneratedKeys="true" keyProperty="id">
+        insert into classrooms
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="capacity != null">capacity,</if>
+            <if test="building != null and building != ''">building,</if>
+            <if test="floor != null">floor,</if>
+            <if test="equipment != null">equipment,</if>
+            <if test="status != null">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="capacity != null">#{capacity},</if>
+            <if test="building != null and building != ''">#{building},</if>
+            <if test="floor != null">#{floor},</if>
+            <if test="equipment != null">#{equipment},</if>
+            <if test="status != null">#{status},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClassrooms" parameterType="Classrooms">
+        update classrooms
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="capacity != null">capacity = #{capacity},</if>
+            <if test="building != null and building != ''">building = #{building},</if>
+            <if test="floor != null">floor = #{floor},</if>
+            <if test="equipment != null">equipment = #{equipment},</if>
+            <if test="status != null">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassroomsById" parameterType="Long">
+        delete from classrooms where id = #{id}
+    </delete>
+
+    <delete id="deleteClassroomsByIds" parameterType="String">
+        delete from classrooms where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

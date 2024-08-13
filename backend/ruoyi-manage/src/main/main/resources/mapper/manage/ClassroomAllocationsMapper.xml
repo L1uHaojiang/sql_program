@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manage.mapper.ClassroomAllocationsMapper">
+    
+    <resultMap type="ClassroomAllocations" id="ClassroomAllocationsResult">
+        <result property="id"    column="id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="classroomId"    column="classroom_id"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+    </resultMap>
+
+    <sql id="selectClassroomAllocationsVo">
+        select id, course_id, classroom_id, start_time, end_time from classroom_allocations
+    </sql>
+
+    <select id="selectClassroomAllocationsList" parameterType="ClassroomAllocations" resultMap="ClassroomAllocationsResult">
+        <include refid="selectClassroomAllocationsVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="classroomId != null "> and classroom_id = #{classroomId}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectClassroomAllocationsById" parameterType="Long" resultMap="ClassroomAllocationsResult">
+        <include refid="selectClassroomAllocationsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertClassroomAllocations" parameterType="ClassroomAllocations" useGeneratedKeys="true" keyProperty="id">
+        insert into classroom_allocations
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="classroomId != null">classroom_id,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="classroomId != null">#{classroomId},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClassroomAllocations" parameterType="ClassroomAllocations">
+        update classroom_allocations
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="classroomId != null">classroom_id = #{classroomId},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassroomAllocationsById" parameterType="Long">
+        delete from classroom_allocations where id = #{id}
+    </delete>
+
+    <delete id="deleteClassroomAllocationsByIds" parameterType="String">
+        delete from classroom_allocations where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manage.mapper.ClassroomBookingsMapper">
+    
+    <resultMap type="ClassroomBookings" id="ClassroomBookingsResult">
+        <result property="id"    column="id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="classroomId"    column="classroom_id"    />
+        <result property="eventName"    column="event_name"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="description"    column="description"    />
+    </resultMap>
+
+    <sql id="selectClassroomBookingsVo">
+        select id, student_id, classroom_id, event_name, start_time, end_time, description from classroom_bookings
+    </sql>
+
+    <select id="selectClassroomBookingsList" parameterType="ClassroomBookings" resultMap="ClassroomBookingsResult">
+        <include refid="selectClassroomBookingsVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="classroomId != null "> and classroom_id = #{classroomId}</if>
+            <if test="eventName != null  and eventName != ''"> and event_name like concat('%', #{eventName}, '%')</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="description != null  and description != ''"> and description = #{description}</if>
+        </where>
+    </select>
+    
+    <select id="selectClassroomBookingsById" parameterType="Long" resultMap="ClassroomBookingsResult">
+        <include refid="selectClassroomBookingsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertClassroomBookings" parameterType="ClassroomBookings" useGeneratedKeys="true" keyProperty="id">
+        insert into classroom_bookings
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="classroomId != null">classroom_id,</if>
+            <if test="eventName != null and eventName != ''">event_name,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="description != null">description,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="classroomId != null">#{classroomId},</if>
+            <if test="eventName != null and eventName != ''">#{eventName},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="description != null">#{description},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClassroomBookings" parameterType="ClassroomBookings">
+        update classroom_bookings
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="classroomId != null">classroom_id = #{classroomId},</if>
+            <if test="eventName != null and eventName != ''">event_name = #{eventName},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="description != null">description = #{description},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassroomBookingsById" parameterType="Long">
+        delete from classroom_bookings where id = #{id}
+    </delete>
+
+    <delete id="deleteClassroomBookingsByIds" parameterType="String">
+        delete from classroom_bookings where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.manage.mapper.MajorsMapper">
+    
+    <resultMap type="Majors" id="MajorsResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="departmentId"    column="department_id"    />
+    </resultMap>
+
+    <sql id="selectMajorsVo">
+        select id, name, department_id from majors
+    </sql>
+
+    <select id="selectMajorsList" parameterType="Majors" resultMap="MajorsResult">
+        <include refid="selectMajorsVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="departmentId != null "> and department_id = #{departmentId}</if>
+        </where>
+    </select>
+    
+    <select id="selectMajorsById" parameterType="Long" resultMap="MajorsResult">
+        <include refid="selectMajorsVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertMajors" parameterType="Majors" useGeneratedKeys="true" keyProperty="id">
+        insert into majors
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">name,</if>
+            <if test="departmentId != null">department_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null and name != ''">#{name},</if>
+            <if test="departmentId != null">#{departmentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMajors" parameterType="Majors">
+        update majors
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null and name != ''">name = #{name},</if>
+            <if test="departmentId != null">department_id = #{departmentId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMajorsById" parameterType="Long">
+        delete from majors where id = #{id}
+    </delete>
+
+    <delete id="deleteMajorsByIds" parameterType="String">
+        delete from majors where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
